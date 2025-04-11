@@ -1,7 +1,107 @@
-<iframe 
-  src="https://www.acerbo.me/chat" 
-  width="100%" 
-  height="600" 
-  frameborder="0"
-  style="border: none;">
-</iframe>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>lacer2k_bot – Top Chat Dropdown</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #e5ddd5;
+    }
+
+    #chat-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      background-color: #075e54;
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-size: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    #n8n-chat-wrapper {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      width: 350px;
+      height: 0;
+      overflow: hidden;
+      transition: height 0.3s ease;
+      z-index: 9999;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
+    }
+
+    #n8n-chat {
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <button id="chat-toggle">💬 Chat</button>
+
+  <div id="n8n-chat-wrapper">
+    <div id="n8n-chat"></div>
+  </div>
+
+  <script type="module">
+    import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+
+    const wrapper = document.getElementById('n8n-chat-wrapper');
+    const toggle = document.getElementById('chat-toggle');
+    let isOpen = false;
+    let chatInitialized = false;
+
+    toggle.addEventListener('click', () => {
+      isOpen = !isOpen;
+      wrapper.style.height = isOpen ? '500px' : '0';
+
+      if (isOpen && !chatInitialized) {
+        createChat({
+          webhookUrl: 'https://lacer2k.app.n8n.cloud/webhook/fcec2e15-1cf5-44d1-b722-88791b74ce15/chat',
+          webhookConfig: {
+            method: 'POST',
+            headers: {}
+          },
+          target: '#n8n-chat',
+          mode: 'window',
+          chatInputKey: 'chatInput',
+          chatSessionKey: 'sessionId',
+          metadata: {},
+          showWelcomeScreen: false,
+          defaultLanguage: 'en',
+          initialMessages: [
+            'Hi there! 👋',
+            'I’m lacer2k_bot. How can I help you today?'
+          ],
+          i18n: {
+            en: {
+              title: 'Chat with lacer2k_bot',
+              subtitle: 'Online – typically replies instantly 💬',
+              footer: '',
+              getStarted: 'Start New Chat',
+              inputPlaceholder: 'Type your message...',
+            },
+          }
+        });
+        chatInitialized = true;
+      }
+    });
+  </script>
+</body>
+</html>
