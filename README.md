@@ -88,6 +88,12 @@ const CONFIG = {
         defaultSampleRate: 48000,
         defaultBitrate: 192000,
         defaultChannels: 2
+    },
+    metadata: {
+        defaultFullName: 'Anonymous User',
+        defaultEmail: 'user@example.com',
+        includeTimestamp: true,
+        includeSource: true
     }
     // ... more options
 };
@@ -117,6 +123,7 @@ WEBHOOK_CONFIG = {
 Simply open `voice_recorder.html` in your browser. The page will:
 - Request microphone permission
 - Allow you to record voice messages
+- Collect optional user information (name and email)
 - Send recordings directly to your n8n webhook
 - Display transcription results
 - Show file storage information

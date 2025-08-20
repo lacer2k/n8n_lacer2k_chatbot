@@ -54,11 +54,11 @@ const CONFIG = {
     
     // Metadata Configuration
     metadata: {
-        defaultTags: ['voice', 'recording'],           // Default tags
-        defaultDescription: 'Voice recording',         // Default description
-        includeTimestamp: true,                        // Include timestamp
-        includeSource: true,                           // Include source info
-        includeAudioQuality: true                      // Include quality info
+        defaultFullName: 'Anonymous User',           // Default full name
+        defaultEmail: 'user@example.com',            // Default email
+        includeTimestamp: true,                      // Include timestamp
+        includeSource: true,                         // Include source info
+        includeAudioQuality: true                    // Include quality info
     },
     
     // File Configuration

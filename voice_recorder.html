@@ -331,12 +331,12 @@
         
         <div class="metadata-form" id="metadataForm" style="display: none;">
             <div class="form-group">
-                <label for="description">Description:</label>
-                <input type="text" id="description" placeholder="Enter a description for your recording">
+                <label for="fullName">Nome e Cognome:</label>
+                <input type="text" id="fullName" placeholder="John Smith">
             </div>
             <div class="form-group">
-                <label for="tags">Tags (comma-separated):</label>
-                <input type="text" id="tags" placeholder="voice, memo, personal">
+                <label for="email">Indirizzo Email:</label>
+                <input type="email" id="email" placeholder="john@smith.com">
             </div>
             <button id="sendBtn" class="btn">📤 Send to Webhook</button>
         </div>
@@ -370,8 +370,8 @@
                 this.stopBtn = document.getElementById('stopBtn');
                 this.resetBtn = document.getElementById('resetBtn');
                 this.metadataForm = document.getElementById('metadataForm');
-                this.description = document.getElementById('description');
-                this.tags = document.getElementById('tags');
+                this.fullName = document.getElementById('fullName');
+                this.email = document.getElementById('email');
                 this.sendBtn = document.getElementById('sendBtn');
                 this.result = document.getElementById('result');
                 this.audioQualityInfo = document.getElementById('audioQualityInfo');
@@ -601,8 +601,8 @@
                 this.audioQualityInfo.style.display = 'none';
                 this.timer.textContent = '00:00';
                 this.updateStatus('Click the microphone to start recording');
-                this.description.value = '';
-                this.tags.value = '';
+                this.fullName.value = '';
+                this.email.value = '';
             }
             
             updateStatus(message) {
@@ -635,8 +635,8 @@
                     
                     // Add metadata using config
                     const metadata = {
-                        description: this.description.value || CONFIG.metadata.defaultDescription,
-                        tags: this.tags.value ? this.tags.value.split(',').map(tag => tag.trim()) : CONFIG.metadata.defaultTags,
+                        fullName: this.fullName.value || CONFIG.metadata.defaultFullName,
+                        email: this.email.value || CONFIG.metadata.defaultEmail,
                         timestamp: CONFIG.metadata.includeTimestamp ? new Date().toISOString() : undefined,
                         source: CONFIG.metadata.includeSource ? 'web-voice-recorder' : undefined,
                         filename: filename,
@@ -728,6 +728,17 @@
                                 <strong>Bitrate:</strong> ${quality.bitrate}<br>
                                 <strong>Channels:</strong> ${quality.channels}<br>
                                 <strong>Duration:</strong> ${quality.duration}
+                            </div>
+                        `;
+                    }
+                    
+                    // Show user information if available
+                    if (data.metadata && (data.metadata.fullName || data.metadata.email)) {
+                        html += `
+                            <div class="file-info">
+                                <strong>User Information:</strong><br>
+                                ${data.metadata.fullName ? `<strong>Name:</strong> ${data.metadata.fullName}<br>` : ''}
+                                ${data.metadata.email ? `<strong>Email:</strong> ${data.metadata.email}` : ''}
                             </div>
                         `;
                     }
