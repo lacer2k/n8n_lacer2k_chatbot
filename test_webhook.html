@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webhook Test - Audio Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+        }
+        .error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+        }
+        .success {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+        .info {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+            margin-bottom: 20px;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Configuration file must be loaded before the main script -->
+    <script src="config.js"></script>
+    
+    <div class="container">
+        <h1>🔧 Webhook Test - Audio Upload</h1>
+        
+        <div class="info">
+            <h3>📋 Test Instructions:</h3>
+            <p>This page helps you test your n8n webhook to verify the binary property structure.</p>
+            <p><strong>Expected webhook output format:</strong></p>
+            <pre>{
+  "binary": {
+    "recording.webm": {
+      "data": "&lt;base64-data&gt;",
+      "mimeType": "audio/webm",
+      "fileName": "recording.webm"
+    }
+  }
+}</pre>
+        </div>
+        
+        <form id="uploadForm">
+            <div class="form-group">
+                <label for="audioFile">Select Audio File:</label>
+                <input type="file" id="audioFile" accept="audio/*" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description (optional):</label>
+                <input type="text" id="description" placeholder="Test audio file">
+            </div>
+            
+            <button type="submit" id="submitBtn">📤 Test Webhook Upload</button>
+        </form>
+        
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('audioFile');
+            const description = document.getElementById('description').value;
+            const submitBtn = document.getElementById('submitBtn');
+            const result = document.getElementById('result');
+            
+            if (!fileInput.files[0]) {
+                alert('Please select an audio file');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Uploading...';
+            
+            try {
+                // Create FormData
+                const formData = new FormData();
+                
+                // IMPORTANT: Use filename as field name for n8n binary property
+                formData.append(file.name, file);
+                
+                // Add metadata
+                if (description) {
+                    formData.append('metadata', JSON.stringify({
+                        description: description,
+                        timestamp: new Date().toISOString(),
+                        source: 'webhook-test'
+                    }));
+                }
+                
+                console.log('Uploading file:', file.name);
+                console.log('FormData contents:');
+                for (let [key, value] of formData.entries()) {
+                    console.log(key, value);
+                }
+                
+                // Send to webhook using config
+                const response = await fetch(CONFIG.webhook.url, {
+                    method: 'POST',
+                    body: formData,
+                    // Add timeout from config
+                    signal: AbortSignal.timeout(CONFIG.webhook.timeout)
+                });
+                
+                const responseText = await response.text();
+                let responseData;
+                
+                try {
+                    responseData = JSON.parse(responseText);
+                } catch (e) {
+                    responseData = { rawResponse: responseText };
+                }
+                
+                if (response.ok) {
+                    result.className = 'result success';
+                    result.innerHTML = `
+                        <h3>✅ Upload Successful!</h3>
+                        <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                        <p><strong>File:</strong> ${file.name} (${(file.size / 1024).toFixed(1)} KB)</p>
+                        <p><strong>Response:</strong></p>
+                        <pre>${JSON.stringify(responseData, null, 2)}</pre>
+                    `;
+                    
+                    // Check if binary property exists
+                    if (responseData.binary && responseData.binary[file.name]) {
+                        result.innerHTML += `
+                            <div style="background: #d4edda; padding: 10px; border-radius: 5px; margin-top: 15px;">
+                                <strong>🎯 Binary Property Found!</strong><br>
+                                Field name "${file.name}" correctly created binary property.
+                            </div>
+                        `;
+                    } else {
+                        result.innerHTML += `
+                            <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin-top: 15px;">
+                                <strong>⚠️ Binary Property Not Found</strong><br>
+                                Expected binary property for field "${file.name}" not found in response.
+                            </div>
+                        `;
+                    }
+                } else {
+                    result.className = 'result error';
+                    result.innerHTML = `
+                        <h3>❌ Upload Failed</h3>
+                        <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                        <p><strong>Response:</strong></p>
+                        <pre>${JSON.stringify(responseData, null, 2)}</pre>
+                    `;
+                }
+                
+                result.style.display = 'block';
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                result.className = 'result error';
+                result.innerHTML = `
+                    <h3>❌ Upload Error</h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                `;
+                result.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '📤 Test Webhook Upload';
+            }
+        });
+    </script>
+</body>
+</html>
