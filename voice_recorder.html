@@ -269,6 +269,131 @@
             font-weight: 500;
         }
 
+        /* Walkie-talkie specific styles */
+        .connection-status {
+            background: #f8f9fa;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            padding: 10px 20px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .connection-status.connected {
+            background: #e6ffe6;
+            border-color: #2ed573;
+        }
+
+        .connection-status.disconnected {
+            background: #ffe6e6;
+            border-color: #ff4757;
+        }
+
+        .connection-status.waiting {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+
+        .status-indicator {
+            font-size: 1.2em;
+            animation: pulse 2s infinite;
+        }
+
+        .walkie-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .walkie-controls .btn {
+            font-size: 0.9em;
+            padding: 8px 16px;
+        }
+
+        .response-player {
+            background: #f0f7ff;
+            border: 2px solid #3742fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .response-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #3742fa;
+        }
+
+        .speaker-icon {
+            font-size: 1.5em;
+            animation: pulse 1s infinite;
+        }
+
+        .response-status {
+            background: #3742fa;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+        }
+
+        .push-to-talk-hint {
+            background: #e6f3ff;
+            border: 1px solid #3742fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 0.9em;
+            color: #3742fa;
+        }
+
+        .recording-indicator {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.8em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 1s infinite;
+        }
+
+        .record-btn {
+            position: relative;
+        }
+
+        .volume-control {
+            background: white;
+            border: 2px solid #3742fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .volume-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+
         @media (max-width: 600px) {
             .container {
                 padding: 20px;
@@ -288,6 +413,16 @@
                 width: 100%;
                 max-width: 200px;
             }
+
+            .walkie-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .walkie-controls .btn {
+                width: 100%;
+                max-width: 200px;
+            }
         }
     </style>
 </head>
@@ -296,12 +431,32 @@
     <script src="config.js"></script>
     
     <div class="container">
-        <h1>🎤 Voice Recorder</h1>
+        <h1 id="appTitle">📻 Walkie-Talkie</h1>
+        
+        <!-- Connection Status -->
+        <div class="connection-status" id="connectionStatus">
+            <span class="status-indicator" id="statusIndicator">🔴</span>
+            <span class="status-text" id="statusText">Connecting to n8n...</span>
+        </div>
         
         <div class="recorder-controls">
-            <button id="recordBtn" class="record-btn" title="Click to start recording">
+            <button id="recordBtn" class="record-btn" title="Hold to talk (Push-to-Talk)">
                 🎙️
             </button>
+            <div class="walkie-controls">
+                <button id="modeBtn" class="btn secondary">🔄 Switch to Click Mode</button>
+                <button id="volumeBtn" class="btn secondary">🔊 Volume</button>
+            </div>
+        </div>
+        
+        <!-- Response Player -->
+        <div class="response-player" id="responsePlayer" style="display: none;">
+            <div class="response-header">
+                <span class="speaker-icon">📻</span>
+                <span class="response-label">n8n Response</span>
+                <span class="response-status" id="responseStatus">Playing...</span>
+            </div>
+            <audio id="responseAudio" controls autoplay></audio>
         </div>
         
         <div class="timer" id="timer">00:00</div>

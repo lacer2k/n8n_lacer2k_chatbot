@@ -6,7 +6,10 @@ const CONFIG = {
     webhook: {
         url: 'https://lacer2k.app.n8n.cloud/webhook-test/b533d79f-b898-40da-ac8d-61039df6dce0',
         timeout: 30000, // 30 seconds timeout
-        retryAttempts: 3
+        retryAttempts: 3,
+        // Walkie-talkie specific endpoints
+        feedbackUrl: 'https://lacer2k.app.n8n.cloud/webhook-test/walkie-talkie-feedback',
+        statusUrl: 'https://lacer2k.app.n8n.cloud/webhook-test/walkie-talkie-status'
     },
     
     // Audio Recording Configuration
@@ -43,7 +46,12 @@ const CONFIG = {
         maxRecordingTime: 300, // 5 minutes in seconds
         showQualityIndicator: true,
         showFileSize: true,
-        showDuration: true
+        showDuration: true,
+        // Walkie-talkie specific UI settings
+        walkieTalkieMode: true,
+        pushToTalk: true,
+        autoPlayResponses: true,
+        showConnectionStatus: true
     },
     
     // Metadata Configuration
@@ -60,6 +68,16 @@ const CONFIG = {
         defaultExtension: 'webm',
         maxFileSize: 50 * 1024 * 1024, // 50MB
         allowedTypes: ['audio/webm', 'audio/mp3', 'audio/wav', 'audio/m4a']
+    },
+    
+    // Walkie-talkie Configuration
+    walkieTalkie: {
+        pollInterval: 2000, // Check for responses every 2 seconds
+        maxWaitTime: 30000, // Maximum wait time for response
+        connectionTimeout: 5000, // Connection timeout
+        retryInterval: 5000, // Retry connection every 5 seconds
+        audioBufferSize: 4096, // Audio buffer size for playback
+        responseFormats: ['audio/mp3', 'audio/wav', 'audio/webm', 'audio/ogg']
     }
 };
 
