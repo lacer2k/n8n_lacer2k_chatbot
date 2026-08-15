@@ -15,10 +15,9 @@ import mimetypes
 try:
     from config import WEBHOOK_CONFIG, AUDIO_CONFIG, FILE_CONFIG, METADATA_CONFIG
 except ImportError:
-    print("Warning: config.py not found, using default values")
-    # Fallback configuration if config.py is not available
+    print("Warning: config.py not found. Copy config.example.py to config.py and set your webhook URL.")
     WEBHOOK_CONFIG = {
-        'url': 'https://lacer2k.app.n8n.cloud/webhook-test/b533d79f-b898-40da-ac8d-61039df6dce0',
+        'url': '',  # set via config.py or --webhook
         'timeout': 30,
         'retry_attempts': 3,
         'max_file_size': 50 * 1024 * 1024

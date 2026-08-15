@@ -1,9 +1,12 @@
+# Example configuration. Copy to config.py and set your webhook URL.
+# config.py is gitignored and must not be committed.
+
 # Configuration file for Audio Transcription Project
 # Modify these settings as needed
 
 # Webhook Configuration
 WEBHOOK_CONFIG = {
-    'url': 'https://lacer2k.app.n8n.cloud/webhook-test/b533d79f-b898-40da-ac8d-61039df6dce0',
+    'url': 'https://your-n8n-instance.com/webhook/audio-webhook',
     'timeout': 30,  # 30 seconds timeout
     'retry_attempts': 3,
     'max_file_size': 50 * 1024 * 1024  # 50MB

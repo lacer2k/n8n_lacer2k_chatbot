@@ -197,13 +197,12 @@ All methods send audio to your n8n webhook. The webhook URL is configured in:
 - **Web Interface**: `config.js` → `CONFIG.webhook.url`
 - **Python Script**: `config.py` → `WEBHOOK_CONFIG['url']`
 
-**Default webhook URL:**
-`https://lacer2k.app.n8n.cloud/webhook-test/b533d79f-b898-40da-ac8d-61039df6dce0`
+**Setup (local only — never commit real webhook URLs):**
+1. `cp config.example.js config.js` and set `CONFIG.webhook.url`
+2. `cp config.example.py config.py` and set `WEBHOOK_CONFIG['url']`
+3. `config.js` / `config.py` are gitignored
 
-**To change the webhook URL:**
-1. Edit `config.js` for the web interface
-2. Edit `config.py` for the Python script
-3. Restart the application/script
+Do not publish production or test webhook URLs in this repository.
 
 ### ⚠️ Important: Field Naming Requirement
 

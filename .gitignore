@@ -1,0 +1,12 @@
+# Local webhook config (copy from *.example.*)
+config.js
+config.py
+
+# Runtime / OS
+__pycache__/
+*.py[cod]
+.DS_Store
+temp/
+*.log
+.env
+.env.*
